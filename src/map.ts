@@ -130,10 +130,15 @@ export function getVCell(x: number, y: number) {
 /**
  * Calculate voronoi regions and populate the map based on the locations of region cells.
  * @param voronoiPointCoords Array of centre-points for each region to calculate.
- * @param voronoiPointGroups Group filter(s) to use from cell types palette for each region (Array position corresponds with coord index in first parameter). Multiple group filters separated by commas.
+ * @param voronoiGroups Group filter(s) to use from cell types palette for each region.
  * @param voronoiCellTypes Palette of cell types to use in the generator. Group property allows selecting certain cell types based on voronoi region.
  */
-export function GenerateCellsVoronoi(width: number, height: number, voronoiPointCoords: VoronoiCoordinate[], voronoiPointGroups: string[], voronoiCellTypes: CellType[]) {
+export function GenerateCellsVoronoi(width: number, height: number, voronoiPointCoords: VoronoiCoordinate[], voronoiGroups: string[], voronoiCellTypes: CellType[]) {
+    let voronoiPointGroups: string[] = []
+    voronoiPointCoords.forEach(() => {
+        voronoiPointGroups.push(voronoiGroups[randInt(0, voronoiGroups.length - 1)])
+    })
+    
     clearMap()
 
     Initialize(width, height, () => voronoiCellTypes)
