@@ -1,0 +1,31 @@
+{
+  "name": "worldhex",
+  "version": "0.1.0",
+  "description": "WorldHex Hex Map Generation Library",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": ["typescript", "library"],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/philbgarner/worldhex"
+  },
+  "bugs": {
+    "url": "https://github.com/philbgarner/worldhex/issues"
+  },
+  "homepage": "https://github.com/philbgarner/worldhex#readme",
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  }
+}
