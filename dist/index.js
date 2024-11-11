@@ -20,7 +20,10 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
-  default: () => src_default
+  height: () => height2,
+  map: () => map_exports,
+  random: () => random_exports,
+  width: () => width2
 });
 module.exports = __toCommonJS(src_exports);
 
@@ -415,9 +418,10 @@ function fov(viewRadius, x, y) {
 // src/index.ts
 var width2 = 256;
 var height2 = 256;
-var src_default = {
-  ...map_exports,
-  ...random_exports,
-  width: width2,
-  height: height2
-};
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  height,
+  map,
+  random,
+  width
+});

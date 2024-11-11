@@ -395,12 +395,9 @@ function fov(viewRadius, x, y) {
 // src/index.ts
 var width2 = 256;
 var height2 = 256;
-var src_default = {
-  ...map_exports,
-  ...random_exports,
-  width: width2,
-  height: height2
-};
 export {
-  src_default as default
+  height2 as height,
+  map_exports as map,
+  random_exports as random,
+  width2 as width
 };
