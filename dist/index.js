@@ -131,10 +131,6 @@ function getVCell(x, y) {
   return voronoiCells[y][x];
 }
 function GenerateCellsVoronoi(width3, height3, voronoiPointCoords, voronoiGroups, voronoiCellTypes) {
-  let voronoiPointGroups = [];
-  voronoiPointCoords.forEach(() => {
-    voronoiPointGroups.push(voronoiGroups[randInt(0, voronoiGroups.length - 1)]);
-  });
   clearMap();
   Initialize(width3, height3, () => voronoiCellTypes);
   for (let y = 0; y < height3; y++) {
@@ -210,14 +206,13 @@ function GenerateCellsVoronoi(width3, height3, voronoiPointCoords, voronoiGroups
     };
     voronoiRegions.push(region);
   });
+  let voronoiRegionGroups = [];
+  voronoiPointCoords.forEach(() => {
+    voronoiRegionGroups.push(voronoiGroups[randInt(0, voronoiGroups.length - 1)]);
+  });
   voronoiRegions.forEach((region, regionIndex) => {
     region.middles.forEach((cell) => {
-      let cellTypes = null;
-      try {
-        cellTypes = voronoiCellTypes.filter((f) => voronoiPointGroups[regionIndex].includes(f.group));
-      } catch (error) {
-        throw new Error(`Error getting cellType (region=${region}, regionIndex=${regionIndex}):` + error);
-      }
+      const cellTypes = voronoiCellTypes.filter((f) => voronoiRegionGroups[regionIndex].includes(f.group));
       if (cellTypes && cellTypes.length > 0) {
         const mapCell = { x: cell.x, y: cell.y, cellType: cellTypes[randInt(0, cellTypes.length - 1)], light: 0 };
         if (mapCell.cellType.characters.length > 1) {
@@ -230,10 +225,10 @@ function GenerateCellsVoronoi(width3, height3, voronoiPointCoords, voronoiGroups
       }
     });
     region.edges.forEach((cell) => {
-      let cellTypes = voronoiCellTypes.filter((f) => f.group.includes(voronoiPointGroups[regionIndex]));
+      let cellTypes = voronoiCellTypes.filter((f) => f.group.includes(voronoiRegionGroups[regionIndex]));
       if (cell.neighbouringRegions.length > 0) {
         cellTypes = [];
-        cell.neighbouringRegions.forEach((regionId) => cellTypes = [...cellTypes, ...voronoiCellTypes.filter((f) => f.group.includes(voronoiPointGroups[regionId]))]);
+        cell.neighbouringRegions.forEach((regionId) => cellTypes = [...cellTypes, ...voronoiCellTypes.filter((f) => f.group.includes(voronoiRegionGroups[regionId]))]);
       }
       if (cellTypes.length > 0) {
         const mapCell = { x: cell.x, y: cell.y, cellType: cellTypes[randInt(0, cellTypes.length - 1)], light: 0 };
@@ -247,6 +242,12 @@ function GenerateCellsVoronoi(width3, height3, voronoiPointCoords, voronoiGroups
       }
     });
   });
+  return {
+    exploredCells,
+    mapCells,
+    voronoiCells,
+    voronoiRegions
+  };
 }
 function getRegion(id) {
   const regionIndex = voronoiRegions.findIndex((f) => f.id === id);

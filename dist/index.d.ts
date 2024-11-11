@@ -63,6 +63,12 @@ type MapCell = {
     x: number;
     y: number;
 };
+type WorldMap = {
+    mapCells: MapCell[][];
+    voronoiCells: VoronoiCell[][];
+    voronoiRegions: VoronoiRegion[];
+    exploredCells: boolean[][];
+};
 interface GenerateCellFunction {
     (cellTypes: CellType[], x: number, y: number): CellType;
 }
@@ -87,7 +93,7 @@ declare function getVCell(x: number, y: number): VoronoiCell | null;
  * @param voronoiGroups Group filter(s) to use from cell types palette for each region.
  * @param voronoiCellTypes Palette of cell types to use in the generator. Group property allows selecting certain cell types based on voronoi region.
  */
-declare function GenerateCellsVoronoi(width: number, height: number, voronoiPointCoords: VoronoiCoordinate[], voronoiGroups: string[], voronoiCellTypes: CellType[]): void;
+declare function GenerateCellsVoronoi(width: number, height: number, voronoiPointCoords: VoronoiCoordinate[], voronoiGroups: string[], voronoiCellTypes: CellType[]): null | WorldMap;
 declare function getRegion(id: number): null | VoronoiRegion;
 declare function clearMap(): void;
 declare function SelectCellTypes(x: number, y: number, selectFn?: SelectCellTypesFunction): CellType[];
@@ -120,6 +126,7 @@ type map_SelectCellTypesFunction = SelectCellTypesFunction;
 type map_VoronoiCell = VoronoiCell;
 type map_VoronoiCoordinate = VoronoiCoordinate;
 type map_VoronoiRegion = VoronoiRegion;
+type map_WorldMap = WorldMap;
 declare const map_clearMap: typeof clearMap;
 declare const map_corners: typeof corners;
 declare const map_distance: typeof distance;
@@ -144,7 +151,7 @@ declare const map_setGenerateCellFunction: typeof setGenerateCellFunction;
 declare const map_voronoiCells: typeof voronoiCells;
 declare const map_voronoiRegions: typeof voronoiRegions;
 declare namespace map {
-  export { type map_CellType as CellType, type map_Coordinates as Coordinates, type map_EdgeCoordinate as EdgeCoordinate, map_GenerateCell as GenerateCell, type map_GenerateCellFunction as GenerateCellFunction, map_GenerateCellsVoronoi as GenerateCellsVoronoi, type map_GetCellsFilterFunction as GetCellsFilterFunction, map_Initialize as Initialize, type map_MapCell as MapCell, map_Rect as Rect, map_SelectCellTypes as SelectCellTypes, type map_SelectCellTypesFunction as SelectCellTypesFunction, type map_VoronoiCell as VoronoiCell, type map_VoronoiCoordinate as VoronoiCoordinate, type map_VoronoiRegion as VoronoiRegion, map_clearMap as clearMap, map_corners as corners, map_distance as distance, map_edges as edges, map_exploredCellCache as exploredCellCache, map_exploredCells as exploredCells, map_fov as fov, map_generateCellFunction as generateCellFunction, map_getCell as getCell, map_getCells as getCells, map_getExploredCells as getExploredCells, map_getRegion as getRegion, map_getVCell as getVCell, height$1 as height, map_isExplored as isExplored, map_mapCells as mapCells, map_middles as middles, map_selectCellTypes as selectCellTypes, map_setAllExplored as setAllExplored, map_setCell as setCell, map_setExplored as setExplored, map_setGenerateCellFunction as setGenerateCellFunction, map_voronoiCells as voronoiCells, map_voronoiRegions as voronoiRegions, width$1 as width };
+  export { type map_CellType as CellType, type map_Coordinates as Coordinates, type map_EdgeCoordinate as EdgeCoordinate, map_GenerateCell as GenerateCell, type map_GenerateCellFunction as GenerateCellFunction, map_GenerateCellsVoronoi as GenerateCellsVoronoi, type map_GetCellsFilterFunction as GetCellsFilterFunction, map_Initialize as Initialize, type map_MapCell as MapCell, map_Rect as Rect, map_SelectCellTypes as SelectCellTypes, type map_SelectCellTypesFunction as SelectCellTypesFunction, type map_VoronoiCell as VoronoiCell, type map_VoronoiCoordinate as VoronoiCoordinate, type map_VoronoiRegion as VoronoiRegion, type map_WorldMap as WorldMap, map_clearMap as clearMap, map_corners as corners, map_distance as distance, map_edges as edges, map_exploredCellCache as exploredCellCache, map_exploredCells as exploredCells, map_fov as fov, map_generateCellFunction as generateCellFunction, map_getCell as getCell, map_getCells as getCells, map_getExploredCells as getExploredCells, map_getRegion as getRegion, map_getVCell as getVCell, height$1 as height, map_isExplored as isExplored, map_mapCells as mapCells, map_middles as middles, map_selectCellTypes as selectCellTypes, map_setAllExplored as setAllExplored, map_setCell as setCell, map_setExplored as setExplored, map_setGenerateCellFunction as setGenerateCellFunction, map_voronoiCells as voronoiCells, map_voronoiRegions as voronoiRegions, width$1 as width };
 }
 
 interface RandomFloatFunction {

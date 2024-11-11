@@ -80,6 +80,13 @@ export type MapCell = {
     y: number
 }
 
+export type WorldMap = {
+    mapCells: MapCell[][],
+    voronoiCells: VoronoiCell[][],
+    voronoiRegions: VoronoiRegion[]
+    exploredCells: boolean[][]
+}
+
 export interface GenerateCellFunction {
     (cellTypes: CellType[], x: number, y: number): CellType
 }
@@ -133,11 +140,7 @@ export function getVCell(x: number, y: number) {
  * @param voronoiGroups Group filter(s) to use from cell types palette for each region.
  * @param voronoiCellTypes Palette of cell types to use in the generator. Group property allows selecting certain cell types based on voronoi region.
  */
-export function GenerateCellsVoronoi(width: number, height: number, voronoiPointCoords: VoronoiCoordinate[], voronoiGroups: string[], voronoiCellTypes: CellType[]) {
-    let voronoiPointGroups: string[] = []
-    voronoiPointCoords.forEach(() => {
-        voronoiPointGroups.push(voronoiGroups[randInt(0, voronoiGroups.length - 1)])
-    })
+export function GenerateCellsVoronoi(width: number, height: number, voronoiPointCoords: VoronoiCoordinate[], voronoiGroups: string[], voronoiCellTypes: CellType[]): null | WorldMap {
     clearMap()
 
     Initialize(width, height, () => voronoiCellTypes)
@@ -230,15 +233,16 @@ export function GenerateCellsVoronoi(width: number, height: number, voronoiPoint
         voronoiRegions.push(region)
     })
 
+    // Build a list of groups that correspond to the regions.
+    let voronoiRegionGroups: string[] = []
+    voronoiPointCoords.forEach(() => {
+        voronoiRegionGroups.push(voronoiGroups[randInt(0, voronoiGroups.length - 1)])
+    })
+
     // Iterate regions and populate cells from cell types array.
     voronoiRegions.forEach((region, regionIndex) => {
         region.middles.forEach(cell => {
-            let cellTypes: null | CellType[] = null
-            try {
-                cellTypes = voronoiCellTypes.filter(f => voronoiPointGroups[regionIndex].includes(f.group))
-            } catch (error) {
-                throw new Error(`Error getting cellType (region=${region}, regionIndex=${regionIndex}):` + error)
-            }
+            const cellTypes: null | CellType[] = voronoiCellTypes.filter(f => voronoiRegionGroups[regionIndex].includes(f.group))
             if (cellTypes && cellTypes.length > 0) {
                 const mapCell: MapCell = { x: cell.x, y: cell.y, cellType: cellTypes[randInt(0, cellTypes.length - 1)], light: 0 }
                 if (mapCell.cellType.characters.length > 1) {
@@ -252,13 +256,13 @@ export function GenerateCellsVoronoi(width: number, height: number, voronoiPoint
         })
 
         region.edges.forEach(cell => {
-            let cellTypes = voronoiCellTypes.filter(f => f.group.includes(voronoiPointGroups[regionIndex]))
+            let cellTypes = voronoiCellTypes.filter(f => f.group.includes(voronoiRegionGroups[regionIndex]))
 
             // If this is an edge cell we want to mix cell types of the two regions in the potential list
             // so you get a randomized blended edge.
             if (cell.neighbouringRegions.length > 0) {
                 cellTypes = []
-                cell.neighbouringRegions.forEach(regionId => cellTypes = [...cellTypes, ...voronoiCellTypes.filter(f => f.group.includes(voronoiPointGroups[regionId]))])
+                cell.neighbouringRegions.forEach(regionId => cellTypes = [...cellTypes, ...voronoiCellTypes.filter(f => f.group.includes(voronoiRegionGroups[regionId]))])
             }
 
             if (cellTypes.length > 0) {
@@ -273,6 +277,13 @@ export function GenerateCellsVoronoi(width: number, height: number, voronoiPoint
             }
         })
     })
+
+    return {
+        exploredCells: exploredCells,
+        mapCells: mapCells,
+        voronoiCells: voronoiCells,
+        voronoiRegions: voronoiRegions
+    }
 }
 
 export function getRegion(id: number): null | VoronoiRegion {
@@ -482,4 +493,8 @@ export function fov(viewRadius: number, x: number, y: number): MapCell[] {
         setExplored(cell.x, cell.y)
     })
     return cells
+}
+
+function mapToWorldCoords(x: number, y: number) {
+    
 }
