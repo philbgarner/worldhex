@@ -138,7 +138,6 @@ export function GenerateCellsVoronoi(width: number, height: number, voronoiPoint
     voronoiPointCoords.forEach(() => {
         voronoiPointGroups.push(voronoiGroups[randInt(0, voronoiGroups.length - 1)])
     })
-    
     clearMap()
 
     Initialize(width, height, () => voronoiCellTypes)
@@ -234,8 +233,13 @@ export function GenerateCellsVoronoi(width: number, height: number, voronoiPoint
     // Iterate regions and populate cells from cell types array.
     voronoiRegions.forEach((region, regionIndex) => {
         region.middles.forEach(cell => {
-            const cellTypes = voronoiCellTypes.filter(f => voronoiPointGroups[regionIndex].includes(f.group))
-            if (cellTypes.length > 0) {
+            let cellTypes: null | CellType[] = null
+            try {
+                cellTypes = voronoiCellTypes.filter(f => voronoiPointGroups[regionIndex].includes(f.group))
+            } catch (error) {
+                throw new Error(`Error getting cellType (region=${region}, regionIndex=${regionIndex}):` + error)
+            }
+            if (cellTypes && cellTypes.length > 0) {
                 const mapCell: MapCell = { x: cell.x, y: cell.y, cellType: cellTypes[randInt(0, cellTypes.length - 1)], light: 0 }
                 if (mapCell.cellType.characters.length > 1) {
                     mapCell.cellType.characters = mapCell.cellType.characters.slice(randInt(0, mapCell.cellType.characters.length - 1))

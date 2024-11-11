@@ -212,8 +212,13 @@ function GenerateCellsVoronoi(width3, height3, voronoiPointCoords, voronoiGroups
   });
   voronoiRegions.forEach((region, regionIndex) => {
     region.middles.forEach((cell) => {
-      const cellTypes = voronoiCellTypes.filter((f) => voronoiPointGroups[regionIndex].includes(f.group));
-      if (cellTypes.length > 0) {
+      let cellTypes = null;
+      try {
+        cellTypes = voronoiCellTypes.filter((f) => voronoiPointGroups[regionIndex].includes(f.group));
+      } catch (error) {
+        throw new Error(`Error getting cellType (region=${region}, regionIndex=${regionIndex}):` + error);
+      }
+      if (cellTypes && cellTypes.length > 0) {
         const mapCell = { x: cell.x, y: cell.y, cellType: cellTypes[randInt(0, cellTypes.length - 1)], light: 0 };
         if (mapCell.cellType.characters.length > 1) {
           mapCell.cellType.characters = mapCell.cellType.characters.slice(randInt(0, mapCell.cellType.characters.length - 1));
