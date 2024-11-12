@@ -1,12 +1,12 @@
-import * as map from "./map";
-import * as random from "./random";
+export * as hexmap from "./map";
+export * as random from "./random";
+
+import { Coordinates, Rect } from './map'
 
 let width = 256
 let height = 256
 
 export {
-    map,
-    random,
-    
+    Coordinates, Rect,
     width, height
 }

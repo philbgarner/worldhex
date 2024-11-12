@@ -25,6 +25,10 @@ export class Rect {
     }
 }
 
+export let hexOffsetX: number = 0.866
+export let hexOffsetY: number = 1
+export let hexScaleX: number = 0.5765
+export let hexScaleY: number = 0.5765
 export let width: number
 export let height: number
 export let mapCells: MapCell[][] = []
@@ -294,6 +298,13 @@ export function getRegion(id: number): null | VoronoiRegion {
     return null
 }
 
+export function mapToWorldCoords(x: number, y: number): Coordinates {
+    return {
+        x: x % 2 === 0 ? x + (hexOffsetX * (1 / 6)) : x, // If column is odd, offset 1/6 hex space to the right.
+        y: x % 2 === 0 ? y + (hexOffsetY * 0.5) : y, // If column is odd, offset 1/2 hex space to the right.
+    }
+}
+
 export function clearMap() {
     mapCells = []
     exploredCells = []
@@ -493,8 +504,4 @@ export function fov(viewRadius: number, x: number, y: number): MapCell[] {
         setExplored(cell.x, cell.y)
     })
     return cells
-}
-
-function mapToWorldCoords(x: number, y: number) {
-    
 }

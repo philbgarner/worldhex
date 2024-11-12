@@ -26,8 +26,13 @@ __export(map_exports, {
   getRegion: () => getRegion,
   getVCell: () => getVCell,
   height: () => height,
+  hexOffsetX: () => hexOffsetX,
+  hexOffsetY: () => hexOffsetY,
+  hexScaleX: () => hexScaleX,
+  hexScaleY: () => hexScaleY,
   isExplored: () => isExplored,
   mapCells: () => mapCells,
+  mapToWorldCoords: () => mapToWorldCoords,
   middles: () => middles,
   selectCellTypes: () => selectCellTypes,
   setAllExplored: () => setAllExplored,
@@ -72,6 +77,10 @@ var Rect = class {
     this.h = h;
   }
 };
+var hexOffsetX = 0.866;
+var hexOffsetY = 1;
+var hexScaleX = 0.5765;
+var hexScaleY = 0.5765;
 var width;
 var height;
 var mapCells = [];
@@ -232,6 +241,14 @@ function getRegion(id) {
     return voronoiRegions[regionIndex];
   }
   return null;
+}
+function mapToWorldCoords(x, y) {
+  return {
+    x: x % 2 === 0 ? x + hexOffsetX * (1 / 6) : x,
+    // If column is odd, offset 1/6 hex space to the right.
+    y: x % 2 === 0 ? y + hexOffsetY * 0.5 : y
+    // If column is odd, offset 1/2 hex space to the right.
+  };
 }
 function clearMap() {
   mapCells = [];
@@ -402,8 +419,9 @@ function fov(viewRadius, x, y) {
 var width2 = 256;
 var height2 = 256;
 export {
+  Rect,
   height2 as height,
-  map_exports as map,
+  map_exports as hexmap,
   random_exports as random,
   width2 as width
 };

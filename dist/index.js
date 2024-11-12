@@ -20,8 +20,9 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
+  Rect: () => Rect,
   height: () => height2,
-  map: () => map_exports,
+  hexmap: () => map_exports,
   random: () => random_exports,
   width: () => width2
 });
@@ -49,8 +50,13 @@ __export(map_exports, {
   getRegion: () => getRegion,
   getVCell: () => getVCell,
   height: () => height,
+  hexOffsetX: () => hexOffsetX,
+  hexOffsetY: () => hexOffsetY,
+  hexScaleX: () => hexScaleX,
+  hexScaleY: () => hexScaleY,
   isExplored: () => isExplored,
   mapCells: () => mapCells,
+  mapToWorldCoords: () => mapToWorldCoords,
   middles: () => middles,
   selectCellTypes: () => selectCellTypes,
   setAllExplored: () => setAllExplored,
@@ -95,6 +101,10 @@ var Rect = class {
     this.h = h;
   }
 };
+var hexOffsetX = 0.866;
+var hexOffsetY = 1;
+var hexScaleX = 0.5765;
+var hexScaleY = 0.5765;
 var width;
 var height;
 var mapCells = [];
@@ -255,6 +265,14 @@ function getRegion(id) {
     return voronoiRegions[regionIndex];
   }
   return null;
+}
+function mapToWorldCoords(x, y) {
+  return {
+    x: x % 2 === 0 ? x + hexOffsetX * (1 / 6) : x,
+    // If column is odd, offset 1/6 hex space to the right.
+    y: x % 2 === 0 ? y + hexOffsetY * 0.5 : y
+    // If column is odd, offset 1/2 hex space to the right.
+  };
 }
 function clearMap() {
   mapCells = [];
@@ -426,8 +444,9 @@ var width2 = 256;
 var height2 = 256;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  Rect,
   height,
-  map,
+  hexmap,
   random,
   width
 });
