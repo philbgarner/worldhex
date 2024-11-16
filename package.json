@@ -1,6 +1,6 @@
 {
   "name": "worldhex",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "WorldHex Hex Map Generation Library",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

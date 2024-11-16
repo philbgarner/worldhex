@@ -43,17 +43,22 @@ export function calculateWorldCoords() {
     for (let y = 0; y < height; y++) {
         const row: Coordinates[] = []
         for (let x = 0; x < width; x++) {
-            const { y: worldX, x: worldY } = getWorldCoords(x, y)
-            row.push({ x: worldX, y: worldY })
+            const coords = lookupWorldCoords(x, y)
+            row.push(coords)
         }
+        worldCoords.push(row)
     }
+}
+
+export function getWorldCoords() {
+    return worldCoords
 }
 
 export function mapToWorldCoords(x: number, y: number): Coordinates {
     return worldCoords[y][x]
 }
 
-export function getWorldCoords(x: number, y: number): Coordinates {
+export function lookupWorldCoords(x: number, y: number): Coordinates {
     const tileXOffsetRate = 0.25
 
     const evenNumbers = numberEven(x)

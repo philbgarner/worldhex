@@ -12,6 +12,7 @@ __export(map_exports, {
   Initialize: () => Initialize,
   Rect: () => Rect,
   SelectCellTypes: () => SelectCellTypes,
+  calculateWorldCoords: () => calculateWorldCoords,
   clearMap: () => clearMap,
   corners: () => corners,
   distance: () => distance,
@@ -25,15 +26,18 @@ __export(map_exports, {
   getExploredCells: () => getExploredCells,
   getRegion: () => getRegion,
   getVCell: () => getVCell,
+  getWorldCoords: () => getWorldCoords,
   height: () => height,
   hexOffsetX: () => hexOffsetX,
   hexOffsetY: () => hexOffsetY,
   hexScaleX: () => hexScaleX,
   hexScaleY: () => hexScaleY,
   isExplored: () => isExplored,
+  lookupWorldCoords: () => lookupWorldCoords,
   mapCells: () => mapCells,
   mapToWorldCoords: () => mapToWorldCoords,
   middles: () => middles,
+  numberEven: () => numberEven,
   selectCellTypes: () => selectCellTypes,
   setAllExplored: () => setAllExplored,
   setCell: () => setCell,
@@ -41,7 +45,8 @@ __export(map_exports, {
   setGenerateCellFunction: () => setGenerateCellFunction,
   voronoiCells: () => voronoiCells,
   voronoiRegions: () => voronoiRegions,
-  width: () => width
+  width: () => width,
+  worldCoords: () => worldCoords
 });
 
 // src/random.ts
@@ -77,10 +82,42 @@ var Rect = class {
     this.h = h;
   }
 };
-var hexOffsetX = 0.866;
-var hexOffsetY = 1;
-var hexScaleX = 0.5765;
-var hexScaleY = 0.5765;
+var hexScaleX = 1;
+var hexScaleY = 1;
+var hexOffsetX = 2;
+var hexOffsetY = 2;
+function numberEven(x) {
+  const calcAmt = (x + 2 - 0 % 2) / 2;
+  return Math.floor(calcAmt - 1);
+}
+var worldCoords = [];
+function calculateWorldCoords() {
+  worldCoords = [];
+  for (let y = 0; y < height; y++) {
+    const row = [];
+    for (let x = 0; x < width; x++) {
+      const coords = lookupWorldCoords(x, y);
+      row.push(coords);
+    }
+    worldCoords.push(row);
+  }
+}
+function getWorldCoords() {
+  return worldCoords;
+}
+function mapToWorldCoords(x, y) {
+  return worldCoords[y][x];
+}
+function lookupWorldCoords(x, y) {
+  const tileXOffsetRate = 0.25;
+  const evenNumbers = numberEven(x);
+  const offsetx = x % 2 === 0 ? evenNumbers * tileXOffsetRate * hexOffsetX : 0;
+  const offsety = x % 2 === 0 ? 0.5 * hexOffsetY : 0;
+  return {
+    x: hexOffsetX * x - offsetx,
+    y: hexOffsetY * y + offsety
+  };
+}
 var width;
 var height;
 var mapCells = [];
@@ -242,19 +279,12 @@ function getRegion(id) {
   }
   return null;
 }
-function mapToWorldCoords(x, y) {
-  return {
-    x: x % 2 === 0 ? x + hexOffsetX * (1 / 6) : x,
-    // If column is odd, offset 1/6 hex space to the right.
-    y: x % 2 === 0 ? y + hexOffsetY * 0.5 : y
-    // If column is odd, offset 1/2 hex space to the right.
-  };
-}
 function clearMap() {
   mapCells = [];
   exploredCells = [];
   voronoiCells = [];
   voronoiRegions = [];
+  calculateWorldCoords();
 }
 function SelectCellTypes(x, y, selectFn) {
   if (selectFn) {
@@ -263,9 +293,9 @@ function SelectCellTypes(x, y, selectFn) {
   return selectCellTypes(x, y);
 }
 function Initialize(mapWidth, mapHeight, selectCellTypesFunction) {
-  clearMap();
   width = mapWidth;
   height = mapHeight;
+  clearMap();
   for (let y = 0; y < height; y++) {
     const cols = [];
     const expl = [];
@@ -418,6 +448,7 @@ function fov(viewRadius, x, y) {
 // src/index.ts
 var width2 = 256;
 var height2 = 256;
+clearMap();
 export {
   Rect,
   height2 as height,
