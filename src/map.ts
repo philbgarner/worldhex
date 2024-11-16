@@ -25,10 +25,47 @@ export class Rect {
     }
 }
 
-export let hexOffsetX: number = 0.866
-export let hexOffsetY: number = 1
-export let hexScaleX: number = 0.5765
-export let hexScaleY: number = 0.5765
+export let hexScaleX: number = 1
+export let hexScaleY: number = 1
+export let hexOffsetX: number = 2
+export let hexOffsetY: number = 2
+
+export function numberEven(x: number) {
+    const calcAmt = (x + 2 - (0 % 2)) / 2
+    return Math.floor(calcAmt - 1) // Don't count zero as even.
+}
+
+export let worldCoords: Coordinates[][] = []
+
+export function calculateWorldCoords() {
+    worldCoords = []
+
+    for (let y = 0; y < height; y++) {
+        const row: Coordinates[] = []
+        for (let x = 0; x < width; x++) {
+            const { y: worldX, x: worldY } = getWorldCoords(x, y)
+            row.push({ x: worldX, y: worldY })
+        }
+    }
+}
+
+export function mapToWorldCoords(x: number, y: number): Coordinates {
+    return worldCoords[y][x]
+}
+
+export function getWorldCoords(x: number, y: number): Coordinates {
+    const tileXOffsetRate = 0.25
+
+    const evenNumbers = numberEven(x)
+
+    const offsetx = x % 2 === 0 ? (evenNumbers * tileXOffsetRate) * hexOffsetX : 0
+    const offsety = x % 2 === 0 ? 0.5 * hexOffsetY : 0
+
+    return {
+        x: hexOffsetX * x - offsetx,
+        y: hexOffsetY * y + offsety
+    }
+}
 export let width: number
 export let height: number
 export let mapCells: MapCell[][] = []
@@ -298,18 +335,12 @@ export function getRegion(id: number): null | VoronoiRegion {
     return null
 }
 
-export function mapToWorldCoords(x: number, y: number): Coordinates {
-    return {
-        x: x % 2 === 0 ? x + (hexOffsetX * (1 / 6)) : x, // If column is odd, offset 1/6 hex space to the right.
-        y: x % 2 === 0 ? y + (hexOffsetY * 0.5) : y, // If column is odd, offset 1/2 hex space to the right.
-    }
-}
-
 export function clearMap() {
     mapCells = []
     exploredCells = []
     voronoiCells = []
     voronoiRegions = []
+    calculateWorldCoords()
 }
 
 export function SelectCellTypes(x: number, y: number, selectFn?: SelectCellTypesFunction): CellType[] {
@@ -320,10 +351,10 @@ export function SelectCellTypes(x: number, y: number, selectFn?: SelectCellTypes
 }
 
 export function Initialize(mapWidth: number, mapHeight: number, selectCellTypesFunction?: SelectCellTypesFunction) {
-    clearMap()
-
     width = mapWidth
     height = mapHeight
+    
+    clearMap()
 
     for (let y = 0; y < height; y++) {
         const cols: MapCell[] = []
