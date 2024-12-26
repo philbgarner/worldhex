@@ -8,6 +8,6 @@ let height = 256
 clearMap()
 
 export {
-    Coordinates, Rect,
+    Rect,
     width, height
 }

@@ -33,7 +33,6 @@ __export(map_exports, {
   hexScaleX: () => hexScaleX,
   hexScaleY: () => hexScaleY,
   isExplored: () => isExplored,
-  lookupWorldCoords: () => lookupWorldCoords,
   mapCells: () => mapCells,
   mapToWorldCoords: () => mapToWorldCoords,
   middles: () => middles,
@@ -82,9 +81,9 @@ var Rect = class {
     this.h = h;
   }
 };
-var hexScaleX = 1;
-var hexScaleY = 1;
-var hexOffsetX = 2;
+var hexScaleX = 3;
+var hexScaleY = 3;
+var hexOffsetX = 1.5;
 var hexOffsetY = 2;
 function numberEven(x) {
   const calcAmt = (x + 2 - 0 % 2) / 2;
@@ -93,12 +92,18 @@ function numberEven(x) {
 var worldCoords = [];
 function calculateWorldCoords() {
   worldCoords = [];
+  let dx = 0;
+  let dy = 0;
   for (let y = 0; y < height; y++) {
     const row = [];
     for (let x = 0; x < width; x++) {
-      const coords = lookupWorldCoords(x, y);
-      row.push(coords);
+      const offsetx = 0;
+      dx += hexOffsetX + offsetx;
+      const offsety = x % 2 === 0 ? 0.5 * hexOffsetY : 0;
+      row.push({ x: dx, y: dy + offsety });
     }
+    dy += hexOffsetY;
+    dx = 0;
     worldCoords.push(row);
   }
 }
@@ -107,16 +112,6 @@ function getWorldCoords() {
 }
 function mapToWorldCoords(x, y) {
   return worldCoords[y][x];
-}
-function lookupWorldCoords(x, y) {
-  const tileXOffsetRate = 0.25;
-  const evenNumbers = numberEven(x);
-  const offsetx = x % 2 === 0 ? evenNumbers * tileXOffsetRate * hexOffsetX : 0;
-  const offsety = x % 2 === 0 ? 0.5 * hexOffsetY : 0;
-  return {
-    x: hexOffsetX * x - offsetx,
-    y: hexOffsetY * y + offsety
-  };
 }
 var width;
 var height;
@@ -209,9 +204,10 @@ function GenerateCellsVoronoi(width3, height3, voronoiPointCoords, voronoiGroups
         if (cellNorth && cellNorth.voronoiId !== cell.voronoiId) {
           neighbourIds.push(cellNorth.voronoiId);
         }
-        edges.push({ id: cell.voronoiId, x, y, neighbouringRegions: Array.from(new Set(neighbourIds)) });
+        const nRegions = Array.from(new Set(neighbourIds));
+        edges.push({ id: cell.voronoiId, x, y, neighbouringRegions: [cell.voronoiId, ...nRegions] });
         if (cornerCount > 2) {
-          corners.push({ id: cell.voronoiId, x, y, neighbouringRegions: Array.from(new Set(neighbourIds)) });
+          corners.push({ id: cell.voronoiId, x, y, neighbouringRegions: [cell.voronoiId, ...nRegions] });
         }
       } else if (cell) {
         middles.push({ id: cell.voronoiId, x, y });

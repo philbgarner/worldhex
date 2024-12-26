@@ -24,7 +24,6 @@ declare let worldCoords: Coordinates[][];
 declare function calculateWorldCoords(): void;
 declare function getWorldCoords(): Coordinates[][];
 declare function mapToWorldCoords(x: number, y: number): Coordinates;
-declare function lookupWorldCoords(x: number, y: number): Coordinates;
 declare let width$1: number;
 declare let height$1: number;
 declare let mapCells: MapCell[][];
@@ -157,7 +156,6 @@ declare const map_hexOffsetY: typeof hexOffsetY;
 declare const map_hexScaleX: typeof hexScaleX;
 declare const map_hexScaleY: typeof hexScaleY;
 declare const map_isExplored: typeof isExplored;
-declare const map_lookupWorldCoords: typeof lookupWorldCoords;
 declare const map_mapCells: typeof mapCells;
 declare const map_mapToWorldCoords: typeof mapToWorldCoords;
 declare const map_middles: typeof middles;
@@ -171,7 +169,7 @@ declare const map_voronoiCells: typeof voronoiCells;
 declare const map_voronoiRegions: typeof voronoiRegions;
 declare const map_worldCoords: typeof worldCoords;
 declare namespace map {
-  export { type map_CellType as CellType, type map_Coordinates as Coordinates, type map_EdgeCoordinate as EdgeCoordinate, map_GenerateCell as GenerateCell, type map_GenerateCellFunction as GenerateCellFunction, map_GenerateCellsVoronoi as GenerateCellsVoronoi, type map_GetCellsFilterFunction as GetCellsFilterFunction, map_Initialize as Initialize, type map_MapCell as MapCell, map_Rect as Rect, map_SelectCellTypes as SelectCellTypes, type map_SelectCellTypesFunction as SelectCellTypesFunction, type map_VoronoiCell as VoronoiCell, type map_VoronoiCoordinate as VoronoiCoordinate, type map_VoronoiRegion as VoronoiRegion, type map_WorldMap as WorldMap, map_calculateWorldCoords as calculateWorldCoords, map_clearMap as clearMap, map_corners as corners, map_distance as distance, map_edges as edges, map_exploredCellCache as exploredCellCache, map_exploredCells as exploredCells, map_fov as fov, map_generateCellFunction as generateCellFunction, map_getCell as getCell, map_getCells as getCells, map_getExploredCells as getExploredCells, map_getRegion as getRegion, map_getVCell as getVCell, map_getWorldCoords as getWorldCoords, height$1 as height, map_hexOffsetX as hexOffsetX, map_hexOffsetY as hexOffsetY, map_hexScaleX as hexScaleX, map_hexScaleY as hexScaleY, map_isExplored as isExplored, map_lookupWorldCoords as lookupWorldCoords, map_mapCells as mapCells, map_mapToWorldCoords as mapToWorldCoords, map_middles as middles, map_numberEven as numberEven, map_selectCellTypes as selectCellTypes, map_setAllExplored as setAllExplored, map_setCell as setCell, map_setExplored as setExplored, map_setGenerateCellFunction as setGenerateCellFunction, map_voronoiCells as voronoiCells, map_voronoiRegions as voronoiRegions, width$1 as width, map_worldCoords as worldCoords };
+  export { type map_CellType as CellType, type map_Coordinates as Coordinates, type map_EdgeCoordinate as EdgeCoordinate, map_GenerateCell as GenerateCell, type map_GenerateCellFunction as GenerateCellFunction, map_GenerateCellsVoronoi as GenerateCellsVoronoi, type map_GetCellsFilterFunction as GetCellsFilterFunction, map_Initialize as Initialize, type map_MapCell as MapCell, map_Rect as Rect, map_SelectCellTypes as SelectCellTypes, type map_SelectCellTypesFunction as SelectCellTypesFunction, type map_VoronoiCell as VoronoiCell, type map_VoronoiCoordinate as VoronoiCoordinate, type map_VoronoiRegion as VoronoiRegion, type map_WorldMap as WorldMap, map_calculateWorldCoords as calculateWorldCoords, map_clearMap as clearMap, map_corners as corners, map_distance as distance, map_edges as edges, map_exploredCellCache as exploredCellCache, map_exploredCells as exploredCells, map_fov as fov, map_generateCellFunction as generateCellFunction, map_getCell as getCell, map_getCells as getCells, map_getExploredCells as getExploredCells, map_getRegion as getRegion, map_getVCell as getVCell, map_getWorldCoords as getWorldCoords, height$1 as height, map_hexOffsetX as hexOffsetX, map_hexOffsetY as hexOffsetY, map_hexScaleX as hexScaleX, map_hexScaleY as hexScaleY, map_isExplored as isExplored, map_mapCells as mapCells, map_mapToWorldCoords as mapToWorldCoords, map_middles as middles, map_numberEven as numberEven, map_selectCellTypes as selectCellTypes, map_setAllExplored as setAllExplored, map_setCell as setCell, map_setExplored as setExplored, map_setGenerateCellFunction as setGenerateCellFunction, map_voronoiCells as voronoiCells, map_voronoiRegions as voronoiRegions, width$1 as width, map_worldCoords as worldCoords };
 }
 
 interface RandomFloatFunction {
@@ -192,4 +190,4 @@ declare namespace random {
 declare let width: number;
 declare let height: number;
 
-export { type Coordinates, Rect, height, map as hexmap, random, width };
+export { Rect, height, map as hexmap, random, width };

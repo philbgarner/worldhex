@@ -1,5 +1,7 @@
 import { randInt } from './random'
 
+const fovSize = 10
+
 /**
  * X and Y coordinates.
  */
@@ -25,9 +27,9 @@ export class Rect {
     }
 }
 
-export let hexScaleX: number = 1
-export let hexScaleY: number = 1
-export let hexOffsetX: number = 2
+export let hexScaleX: number = 3
+export let hexScaleY: number = 3
+export let hexOffsetX: number = 1.5
 export let hexOffsetY: number = 2
 
 export function numberEven(x: number) {
@@ -40,12 +42,18 @@ export let worldCoords: Coordinates[][] = []
 export function calculateWorldCoords() {
     worldCoords = []
 
+    let dx = 0
+    let dy = 0
     for (let y = 0; y < height; y++) {
         const row: Coordinates[] = []
         for (let x = 0; x < width; x++) {
-            const coords = lookupWorldCoords(x, y)
-            row.push(coords)
+            const offsetx = 0//x % 2 === 0 ? (1 / 3) * hexOffsetX : 0
+            dx += hexOffsetX + offsetx
+            const offsety = x % 2 === 0 ? 0.5 * hexOffsetY : 0
+            row.push({ x: dx, y: dy + offsety })
         }
+        dy += hexOffsetY
+        dx = 0
         worldCoords.push(row)
     }
 }
@@ -58,19 +66,6 @@ export function mapToWorldCoords(x: number, y: number): Coordinates {
     return worldCoords[y][x]
 }
 
-export function lookupWorldCoords(x: number, y: number): Coordinates {
-    const tileXOffsetRate = 0.25
-
-    const evenNumbers = numberEven(x)
-
-    const offsetx = x % 2 === 0 ? (evenNumbers * tileXOffsetRate) * hexOffsetX : 0
-    const offsety = x % 2 === 0 ? 0.5 * hexOffsetY : 0
-
-    return {
-        x: hexOffsetX * x - offsetx,
-        y: hexOffsetY * y + offsety
-    }
-}
 export let width: number
 export let height: number
 export let mapCells: MapCell[][] = []
@@ -255,10 +250,10 @@ export function GenerateCellsVoronoi(width: number, height: number, voronoiPoint
                     if (cellNorth && cellNorth.voronoiId !== cell.voronoiId) {
                         neighbourIds.push(cellNorth.voronoiId)
                     }
-                    
-                    edges.push({ id: cell.voronoiId, x: x, y: y, neighbouringRegions: Array.from(new Set(neighbourIds)) })
+                    const nRegions = Array.from(new Set(neighbourIds))
+                    edges.push({ id: cell.voronoiId, x: x, y: y, neighbouringRegions: [cell.voronoiId, ...nRegions] })
                     if (cornerCount > 2) {
-                        corners.push({ id: cell.voronoiId, x: x, y: y, neighbouringRegions: Array.from(new Set(neighbourIds)) })
+                        corners.push({ id: cell.voronoiId, x: x, y: y, neighbouringRegions: [cell.voronoiId, ...nRegions] })
                     }
                 }
             else if (cell) {
