@@ -180,9 +180,9 @@ function GenerateCellsVoronoi(width3, height3, voronoiPointCoords, voronoiGroups
     for (let x = 0; x < width3; x++) {
       const voronoi = voronoiPointCoords.filter((f) => f.x === x && f.y === y);
       if (voronoi.length > 0) {
-        cols.push({ voronoiId: voronoi[0].id, distance: 0 });
+        cols.push({ voronoiId: voronoi[0].id, distance: 0, distanceToEdge: 0 });
       } else {
-        cols.push({ voronoiId: -1, distance: width3 * height3 + 1 });
+        cols.push({ voronoiId: -1, distance: width3 * height3 + 1, distanceToEdge: 0 });
       }
     }
     voronoiCells.push(cols);
@@ -235,6 +235,27 @@ function GenerateCellsVoronoi(width3, height3, voronoiPointCoords, voronoiGroups
         }
       } else if (cell) {
         middles.push({ id: cell.voronoiId, x, y });
+      }
+    }
+  }
+  for (let y = 0; y < height3; y++) {
+    for (let x = 0; x < width3; x++) {
+      const cell = getVCell(x, y);
+      if (cell) {
+        const region = getRegion(cell.voronoiId);
+        if (region) {
+          const distToEdges = region.edges.map((edge) => {
+            const dist = distance(edge.x, edge.y, x, y);
+            return {
+              x,
+              y,
+              distance: dist
+            };
+          }).sort((a, b) => a.distance - b.distance);
+          cell.distanceToEdge = distToEdges[0].distance;
+        } else {
+          cell.distanceToEdge = -1;
+        }
       }
     }
   }

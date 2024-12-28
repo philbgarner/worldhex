@@ -56,6 +56,7 @@ type VoronoiRegion = {
 type VoronoiCell = {
     voronoiId: number;
     distance: number;
+    distanceToEdge: number;
 };
 type CellType = {
     name: string;

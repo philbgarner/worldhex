@@ -1,7 +1,5 @@
 import { randInt } from './random'
 
-const fovSize = 10
-
 /**
  * X and Y coordinates.
  */
@@ -102,6 +100,7 @@ export type VoronoiRegion = {
 export type VoronoiCell = {
     voronoiId: number,
     distance: number,
+    distanceToEdge: number
 }
 
 export type CellType = {
@@ -192,9 +191,9 @@ export function GenerateCellsVoronoi(width: number, height: number, voronoiPoint
         for (let x = 0; x < width; x++) {
             const voronoi = voronoiPointCoords.filter(f => f.x === x && f.y === y)
             if (voronoi.length > 0) {
-                cols.push({ voronoiId: voronoi[0].id, distance: 0 })
+                cols.push({ voronoiId: voronoi[0].id, distance: 0, distanceToEdge: 0 })
             } else {
-                cols.push({ voronoiId: -1, distance: width * height + 1 })
+                cols.push({ voronoiId: -1, distance: width * height + 1, distanceToEdge: 0 })
             }
         }
         voronoiCells.push(cols)
@@ -258,6 +257,28 @@ export function GenerateCellsVoronoi(width: number, height: number, voronoiPoint
                 }
             else if (cell) {
                 middles.push({ id: cell.voronoiId, x: x, y: y })
+            }
+        }
+    }
+
+    // Iterate the map again, but this time we annotate the 
+    // graph with other useful data like each cell's distance to nearest edge.
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const cell = getVCell(x, y)
+            if (cell) {
+                const region = getRegion(cell.voronoiId)
+                if (region) {
+                    const distToEdges = region.edges.map(edge => {
+                        const dist = distance(edge.x, edge.y, x, y)
+                        return {
+                            x: x, y: y, distance: dist
+                        }
+                    }).sort((a, b) => a.distance - b.distance)
+                    cell.distanceToEdge = distToEdges[0].distance
+                } else {
+                    cell.distanceToEdge = -1 // Cell that belongs to no region.
+                }
             }
         }
     }
